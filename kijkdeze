@@ -146,7 +146,9 @@ int main()
 {
 	//hoofdmenu();
 	head = 0;
-	int groote = 10;
+	cout << "Hoe groot moet het boord?" << endl;
+	int groote;
+	cin >> groote;
 	for (int i = 0; i < groote; i++)
 	{
 		ToevoegenVer(i); 
