@@ -1,0 +1,56 @@
+// pm4.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+void hoofdmenu()
+{
+	bool again = true;
+	while (again) {
+		cout << "s[c]hoon, c[u]rsor, [r]andom, [n]ul, [i]nlezen, w[e]gschrijven, [w]ijzigen, [q]stoppen, [b]eschrijving, [p]rinten" << endl;
+		char menuinput = cin.get();
+		switch (menuinput) {
+		case 'c': { test(); break; }
+		case 'q': {again = false; break; }
+		default: { break; }
+		}//switch
+		cin.get(); //Als er op enter wordt gedrukt gaat hij terug naar het hoofdmenu
+	}
+
+	//int hoofdmenu();
+	//hoofdmenu();
+}//hoofdmenu
+
+class grid {
+	int data;
+	//windrichtingen voor duidelijkheid
+	class grid* noord;
+	class grid* noordoost;
+	class grid* oost;
+	class grid* zuidoost;
+	class grid* zuid;
+	class grid* zuidwest;
+	class grid* west;
+	class grid* noordwest;
+	
+};
+
+class grid* GetNewNode(int x) {
+	class lijst* nieuwLijst = new lijst;
+	nieuwLijst->data = x;
+	nieuwLijst->prev = 0;
+	nieuwLijst->next = 0;
+	return nieuwLijst;
+}
+
+int main()
+{
+	//hoofdmenu();
+	vakje* ingang;
+	ingang = new vakje;
+	ingang->info = 1;
+	ingang->volgende = NULL;
+	
+}
