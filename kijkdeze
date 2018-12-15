@@ -40,11 +40,11 @@ public:
 	class grid* zuidwest;
 	class grid* west;
 	class grid* noordwest;
-	
+
 };
 
 class grid* head; //het begin
-				   			   
+
 //nieuwe pointer aan pointerbord toevoegen
 class grid* newItem(int x) {
 	class grid* newItem = new grid;
@@ -99,7 +99,7 @@ void ToevoegenVer(int x) {
 	nieuwe->noordwest = vorige->west;
 }
 
-void ToevoegenVer(int x, class grid* begin) {
+void ToevoegenHor(int x, class grid* begin) {
 	//pointertje om de lijst mee door te lopen
 	class grid* vorige = begin;
 	//de nieuwe pointer
@@ -116,9 +116,9 @@ void verbinden(int groote) {
 	//pointertje om de lijst mee door te lopen
 	class grid* tempHead = head;
 	while (tempHead->zuid != NULL) {
-		for (int i = 0; i < groote; i++)
+		for (int i = 1; i < groote; i++)
 		{
-			ToevoegenVer(i, tempHead);
+			ToevoegenHor(i, tempHead);
 		}
 		tempHead = tempHead->zuid;
 	}
@@ -138,7 +138,7 @@ void print() {
 		tempVer = tempVer->zuid;
 		tempHor = head;
 	}
-	
+
 	cout << endl;
 }
 
@@ -151,7 +151,7 @@ int main()
 	cin >> groote;
 	for (int i = 0; i < groote; i++)
 	{
-		ToevoegenVer(i); 
+		ToevoegenVer(i);
 	}
 	verbinden(groote);
 	print();
