@@ -79,13 +79,66 @@ void ToevoegenLijst(int x) {
 	nieuwe->noordwest = vorige->noord;
 }
 
-//afdrukkenLijst
-void printLijst() {
-	class grid* temp = head;
-	while (temp != 0) {
-		cout << temp->data << " ";
-		temp = temp->oost;
+void ToevoegenVer(int x) {
+	//pointertje om de lijst mee door te lopen
+	class grid* vorige = head;
+	//de nieuwe pointer
+	class grid* nieuwe = newItem(x);
+
+	//als de lijst leeg is wordt dit het eerste item
+	if (head == NULL) {
+		head = nieuwe;
+		return;
 	}
+	while (vorige->zuid != NULL) vorige = vorige->zuid; // Go To last Node
+	vorige->zuid = nieuwe;
+	nieuwe->noord = vorige;
+	nieuwe->noordoost = vorige->oost;
+	nieuwe->oost = vorige->zuidoost;
+	nieuwe->west = vorige->zuidwest;
+	nieuwe->noordwest = vorige->west;
+}
+
+void ToevoegenVer(int x, class grid* begin) {
+	//pointertje om de lijst mee door te lopen
+	class grid* vorige = begin;
+	//de nieuwe pointer
+	class grid* nieuwe = newItem(x);
+
+	while (vorige->oost != NULL) vorige = vorige->oost; // Go To last Node
+	vorige->oost = nieuwe;
+	nieuwe->noord = vorige->noordoost;
+	nieuwe->west = vorige;
+	nieuwe->noordwest = vorige->noord;
+}
+
+void verbinden(int groote) {
+	//pointertje om de lijst mee door te lopen
+	class grid* tempHead = head;
+	while (tempHead->zuid != NULL) {
+		for (int i = 0; i < groote; i++)
+		{
+			ToevoegenVer(i, tempHead);
+		}
+		tempHead = tempHead->zuid;
+	}
+
+}
+
+//afdrukken
+void print() {
+	class grid* tempHor = head;
+	class grid* tempVer = head;
+	while (tempVer != 0) {
+		while (tempHor != 0) {
+			cout << tempHor->data << " ";
+			tempHor = tempHor->oost;
+		}
+		cout << endl;
+		tempVer = tempVer->zuid;
+		tempHor = head;
+	}
+	
 	cout << endl;
 }
 
@@ -93,7 +146,12 @@ int main()
 {
 	//hoofdmenu();
 	head = 0;
-	ToevoegenLijst(5); printLijst();
-	ToevoegenLijst(10); printLijst();
-	ToevoegenLijst(15); printLijst();
+	int groote = 10;
+	for (int i = 0; i < groote; i++)
+	{
+		ToevoegenVer(i); 
+	}
+	verbinden(groote);
+	print();
+
 }
