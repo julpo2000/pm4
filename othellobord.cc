@@ -167,11 +167,11 @@ void verbinden(class grid* boven) {
 	
 }
 
-void maakBoord() {
+void maakBord() {
 	head = 0;
 	//voor toevoegenRij
 	class grid* tempVer;
-	cout << "Hoe groot moet het boord? Minimaal 2." << endl;
+	cout << "Hoe groot moet het bord? Minimaal 2." << endl;
 	int lengte = leesGetal();
 	for (int i = 0; i < lengte; i++)
 	{
@@ -194,7 +194,7 @@ void maakBoord() {
 int main()
 {
 	//hoofdmenu();
-	maakBoord();
+	maakBord();
 	head->zuidoost->zuidoost->noordoost->data = 5;
 	cout << head->zuidoost->zuidoost->noordoost->data << endl;
 	print();
