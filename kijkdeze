@@ -5,6 +5,26 @@
 #include <iostream>
 using namespace std;
 
+int leesGetal() {
+	int vorigGetal = -1; //als het getal stopt
+	int input = cin.get();
+	while (input != 10) //tot enter
+	{
+		if (input > 47 && input < 58) { //als getal
+			int inputGetal = input - '0';
+			if (vorigGetal == -1) { //als er geen getal voorstond
+				vorigGetal = inputGetal;
+			}
+			else { //als er wel een getal voorstond
+				vorigGetal = vorigGetal * 10 + inputGetal;
+			}
+		}
+		input = cin.get();
+	}
+	return vorigGetal; //geef getal terug
+	vorigGetal = -1;
+}//inputNumber
+
 /*
 void hoofdmenu()
 {
@@ -60,100 +80,122 @@ class grid* newItem(int x) {
 	return newItem;
 }
 
-//toevoegen aan de lijst
-void ToevoegenLijst(int x) {
-	//pointertje om de lijst mee door te lopen
-	class grid* vorige = head;
-	//de nieuwe pointer
-	class grid* nieuwe = newItem(x);
-
-	//als de lijst leeg is wordt dit het eerste item
-	if (head == NULL) {
-		head = nieuwe;
-		return;
-	}
-	while (vorige->oost != NULL) vorige = vorige->oost; // Go To last Node
-	vorige->oost = nieuwe;
-	nieuwe->noord = vorige->noordoost;
-	nieuwe->west = vorige;
-	nieuwe->noordwest = vorige->noord;
-}
-
-void ToevoegenVer(int x) {
-	//pointertje om de lijst mee door te lopen
-	class grid* vorige = head;
-	//de nieuwe pointer
-	class grid* nieuwe = newItem(x);
-
-	//als de lijst leeg is wordt dit het eerste item
-	if (head == NULL) {
-		head = nieuwe;
-		return;
-	}
-	while (vorige->zuid != NULL) vorige = vorige->zuid; // Go To last Node
-	vorige->zuid = nieuwe;
-	nieuwe->noord = vorige;
-	nieuwe->noordoost = vorige->oost;
-	nieuwe->oost = vorige->zuidoost;
-	nieuwe->west = vorige->zuidwest;
-	nieuwe->noordwest = vorige->west;
-}
-
-void ToevoegenHor(int x, class grid* begin) {
-	//pointertje om de lijst mee door te lopen
-	class grid* vorige = begin;
-	//de nieuwe pointer
-	class grid* nieuwe = newItem(x);
-
-	while (vorige->oost != NULL) vorige = vorige->oost; // Go To last Node
-	vorige->oost = nieuwe;
-	nieuwe->noord = vorige->noordoost;
-	nieuwe->west = vorige;
-	nieuwe->noordwest = vorige->noord;
-}
-
-void verbinden(int groote) {
-	//pointertje om de lijst mee door te lopen
-	class grid* tempHead = head;
-	while (tempHead->zuid != NULL) {
-		for (int i = 1; i < groote; i++)
-		{
-			ToevoegenHor(i, tempHead);
-		}
-		tempHead = tempHead->zuid;
-	}
-
-}
-
-//afdrukken
+//pointerbord afdrukken
 void print() {
+	//pointers om af te lopen
 	class grid* tempHor = head;
 	class grid* tempVer = head;
-	while (tempVer != 0) {
-		while (tempHor != 0) {
+	while (tempVer) {
+		while (tempHor) {
 			cout << tempHor->data << " ";
 			tempHor = tempHor->oost;
 		}
 		cout << endl;
 		tempVer = tempVer->zuid;
-		tempHor = head;
+		tempHor = tempVer;
 	}
 
 	cout << endl;
 }
 
+void toevoegenVer() {
+	//pointertje om de lijst mee door te lopen
+	class grid* vorige = head;
+	//de nieuwe pointer
+	class grid* nieuwe = newItem(0);
+
+	//als de lijst leeg is wordt dit het eerste item
+	if (head == NULL) {
+		head = nieuwe;
+		return;
+	}
+	//naar laatste pointer gaan
+	while (vorige->zuid){
+		vorige = vorige->zuid;
+	}
+	//nieuwe aanmaken
+	vorige->zuid = nieuwe;
+
+	//verbinden met noord
+	nieuwe->noord = vorige;
+}
+
+void toevoegenRij(class grid* begin) {
+	//de nieuwe pointer
+	class grid* nieuwe = newItem(0);
+
+	//meest oost
+	while (begin->oost) {
+		begin = begin->oost;
+	}
+	//nieuwe aanmaken
+	begin->oost = nieuwe;
+
+	//verbinden met west
+	nieuwe->west = begin;
+}
+
+void verbinden(class grid* boven) {
+	
+	class grid* beneden = boven->zuid;
+	
+	//alle kollommen afgaan
+	while (beneden->zuid) {
+		//hulppointers
+		class grid* tempBeneden = beneden;
+		class grid* tempBoven = boven;
+
+		//voor alle horizontale
+		while (tempBoven->oost) {
+			//beneden naar boven
+			tempBeneden->noord = tempBoven;
+			tempBeneden->noordoost = tempBoven->oost;
+			tempBeneden->noordwest = tempBoven->west;
+
+			//boven naar beneden
+			tempBoven->zuidoost = tempBeneden->oost;
+			tempBoven->zuid = tempBeneden;
+			tempBoven->zuidwest = tempBeneden->west;
+
+			tempBoven = tempBoven->oost;
+			tempBeneden = tempBeneden->oost;
+		}
+		boven = beneden;
+		beneden = beneden->zuid;
+	}
+	
+	
+}
+
+void maakBoord() {
+	head = 0;
+	//voor toevoegenRij
+	class grid* tempVer;
+	cout << "Hoe groot moet het boord? Minimaal 2." << endl;
+	int lengte = leesGetal();
+	for (int i = 0; i < lengte; i++)
+	{
+		toevoegenVer();
+				
+	}
+	tempVer = head;
+	while (tempVer) {
+		for (int k = 1; k < lengte; k++)
+		{
+			toevoegenRij(tempVer);
+		}
+		tempVer = tempVer->zuid;
+	}
+	verbinden(head);
+	print();
+	
+}
+
 int main()
 {
 	//hoofdmenu();
-	head = 0;
-	cout << "Hoe groot moet het boord?" << endl;
-	int groote;
-	cin >> groote;
-	for (int i = 0; i < groote; i++)
-	{
-		ToevoegenVer(i);
-	}
-	verbinden(groote);
+	maakBoord();
+	head->zuidoost->zuidoost->noordoost->data = 5;
+	cout << head->zuidoost->zuidoost->noordoost->data << endl;
 	print();
-
 }
