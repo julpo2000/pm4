@@ -81,18 +81,44 @@ class grid* newItem(int x) {
 }
 
 //pointerbord afdrukken
-void print() {
+void print(int lengte) {
 	//pointers om af te lopen
 	class grid* tempHor = head;
 	class grid* tempVer = head;
+	
+	//nummers aan de randen
+	int teller = 0;
+	cout << "  ";
+	for (teller = 0; teller < lengte; teller++)
+	{
+		cout << teller << " ";
+		tempHor = tempHor->oost;
+	}
+	cout << endl;
+	//terugzetten
+	tempHor = head;
+	teller = 0;
 	while (tempVer) {
+		cout << teller << " ";
 		while (tempHor) {
-			cout << tempHor->data << " ";
+			//zwart
+			if (tempHor->data == 1) {
+				cout << "X ";
+			}
+			//wit
+			else if (tempHor->data == 2) {
+				cout << "O ";
+			}
+			//iets anders dus leeg
+			else {
+				cout << "- ";
+			}
 			tempHor = tempHor->oost;
 		}
 		cout << endl;
 		tempVer = tempVer->zuid;
 		tempHor = tempVer;
+		teller++;
 	}
 
 	cout << endl;
@@ -167,16 +193,26 @@ void verbinden(class grid* boven) {
 	
 }
 
-void maakBoord() {
+void headVerbinden() {
+	//omdat head speciaal is gebruiken we een speciale manier
+	head->oost = head->zuidoost->noord;
+}
+
+void maakBord(int &lengte) {
 	head = 0;
 	//voor toevoegenRij
 	class grid* tempVer;
-	cout << "Hoe groot moet het boord? Minimaal 2." << endl;
-	int lengte = leesGetal();
+	//0 zodat de while loop werkt
+	lengte = 0;
+	//minimaal 2 dus herhalen totdat 2
+	while (lengte < 2 || lengte % 2) {
+		cout << "Hoe groot moet het boord? Minimaal 2 en even." << endl;
+		lengte = leesGetal();
+	}
+	 
 	for (int i = 0; i < lengte; i++)
 	{
 		toevoegenVer();
-				
 	}
 	tempVer = head;
 	while (tempVer) {
@@ -187,15 +223,230 @@ void maakBoord() {
 		tempVer = tempVer->zuid;
 	}
 	verbinden(head);
-	print();
+	headVerbinden();	
+}
+
+class grid* pointerCo(int xCo, int yCo, int lengte) {
+	//coordinaten in het bord
+	xCo = xCo % lengte;
+	yCo = yCo % lengte;
+
+	//hulp pointer
+	class grid* temp = head;
+	for (int i = 0; i < yCo; i++)
+	{
+		temp = temp->zuid;
+	}
+	for (int i = 0; i < xCo; i++)
+	{
+		temp = temp->oost;
+	}
+	return temp;
+}
+
+void veranderData(class grid* temp, int waarde) {
+	temp->data = waarde;
+}
+
+void beginPositie(int lengte) {
+	//het midden
+	int co = lengte / 2;
+	//wit
+	veranderData(pointerCo(co, co, lengte), 2);
+	co--;
+	veranderData(pointerCo(co, co, lengte), 2);
+
+	//zwart
+	veranderData(pointerCo(co+1, co, lengte), 1);
+	veranderData(pointerCo(co, co+1, lengte), 1);
+}
+
+bool beurtValid(bool beurt, class grid* locatie) {
+	class grid* tempLocatie;
+	//waarde voor kijken
+	int EigenWaarde;
+	int TegenWaarde;
+	int counter;
+	if (beurt) {
+		EigenWaarde = 1;
+		TegenWaarde = 2;
+	}
+	else {
+		EigenWaarde = 2;
+		TegenWaarde = 1;
+	}
+	if (locatie->data != 0) {
+		return 0;
+	}
+
+	//noord
+	counter = 0;
+	tempLocatie = locatie;
+	while (tempLocatie->noord)
+	{
+		while (tempLocatie->noord->data == TegenWaarde) {
+			tempLocatie = tempLocatie->noord;
+			counter++;
+			if (tempLocatie->noord == 0) {
+				break;
+			}
+		}
+		if (tempLocatie->noord == 0) {
+			break;
+		}
+		else if (tempLocatie->noord->data == EigenWaarde && counter) {
+			return 1;
+		}
+		else {
+			break;
+		}
+	}
+
+	//oost
+	counter = 0;
+	tempLocatie = locatie;
+	while (tempLocatie->oost)
+	{
+		while (tempLocatie->oost->data == TegenWaarde) {
+				tempLocatie = tempLocatie->oost;
+				counter++;
+				if (tempLocatie->oost == 0) {
+					break;
+				}
+		}
+		if (tempLocatie->oost == 0) {
+			break;
+		}
+		else if (tempLocatie->oost->data == EigenWaarde && counter) {
+			return 1;
+		}
+		else {
+			break;
+		}
+	}
+
+	//zuid
+	counter = 0;
+	tempLocatie = locatie;
+	while (tempLocatie->zuid)
+	{
+		while (tempLocatie->zuid->data == TegenWaarde) {
+				tempLocatie = tempLocatie->zuid;
+				counter++;
+				if (tempLocatie->zuid == 0) {
+					break;
+				}
+		}
+		if (tempLocatie->zuid == 0) {
+			break;
+		}
+		else if (tempLocatie->zuid->data == EigenWaarde && counter) {
+			return 1;
+		}
+		else {
+			break;
+		}
+	}	
+	
+	//west
+	counter = 0;
+	tempLocatie = locatie;
+	while (tempLocatie->west)
+	{
+		while (tempLocatie->west->data == TegenWaarde) {
+			tempLocatie = tempLocatie->west;
+			counter++;
+			if (tempLocatie->west == 0) {
+				break;
+			}
+		}
+		if (tempLocatie->west == 0) {
+			break;
+		}
+		else if (tempLocatie->west->data == EigenWaarde && counter) {
+			return 1;
+		}
+		else {
+			break;
+		}
+	}
+	return 0;
+}
+
+void beurtDoenMens(bool &beurt, int lengte) {
+	int waarde;
+	if (beurt) {
+		cout << "Zwart is aan de beurt" << endl;
+		waarde = 1;
+	}
+	else {
+		cout << "Wit is aan de beurt" << endl;
+		waarde = 2;
+	}
+	//optie om te selecteren
+	cout << "Mogelijke opties zijn:" << endl;
+	for (int i = 0; i < lengte; i++)
+	{
+		for (int k = 0; k < lengte; k++)
+		{
+			if (beurtValid(beurt, pointerCo(i, k, lengte))) {
+				cout <<"X=" << i << " Y=" << k << endl;
+			}			
+		}
+	}
+	cout << "Voer de X in van uw optie: ";
+	int xCo = leesGetal();
+	cout << "Voer de Y in van uw optie: ";
+	int yCo = leesGetal();
+	if (beurtValid(beurt, pointerCo(xCo, yCo, lengte))) {
+		veranderData(pointerCo(xCo, yCo, lengte), waarde);
+		if (beurt) {
+			beurt = 0;
+		}
+		else {
+			beurt = 1;
+		}
+	}
+	else {
+		cout << "Dat is geen mogelijke zet" << endl;
+	}
+}
+
+void spelen(bool beurt, int lengte) {
+	int beurtMogelijk = 1;
+	while (beurtMogelijk) {
+		beurtDoenMens(beurt, lengte);
+		print(lengte);
+		beurtMogelijk = 0;
+		for (int i = 0; i < lengte; i++)
+		{
+			for (int k = 0; k < lengte; k++)
+			{
+				if (beurtValid(beurt, pointerCo(i, k, lengte))) {
+					beurtMogelijk = 1;
+				}
+			}
+		}
+	}
+	if (beurt) {
+		cout << "Wit wint!" << endl;
+	}
+	else {
+		cout << "Zwart wint!" << endl;
+	}
 	
 }
 
 int main()
 {
+	//lengte moet overal bruikbaar zijn
+	int lengte;
+
+	//wit = 0, zwart = 1;
+	bool beurt = 1;
 	//hoofdmenu();
-	maakBoord();
-	head->zuidoost->zuidoost->noordoost->data = 5;
-	cout << head->zuidoost->zuidoost->noordoost->data << endl;
-	print();
+	maakBord(lengte);
+	beginPositie(lengte);
+	print(lengte);
+	spelen(beurt, lengte);
 }
