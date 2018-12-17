@@ -3,6 +3,8 @@
 
 #include "pch.h"
 #include <iostream>
+#include <cstdlib> //random
+#include <ctime>
 using namespace std;
 
 int leesGetal() {
@@ -777,10 +779,111 @@ void beurtDoenMens(bool &beurt, int lengte) {
 	}
 }
 
-void spelen(bool beurt, int lengte) {
+void beurtDoenPC(bool &beurt, int lengte){
+	//beurtDoenMens maar dan zonder informatie vragen
+	int waarde;
+	if (beurt) {
+		waarde = 1;
+		cout << "Zwart deed ";
+	}
+	else {
+		waarde = 2;
+		cout << "Wit deed ";
+	}
+	//random coordinaten
+	int xCo = rand();
+	int yCo = rand();
+	//net zolang random tot er een mogelijke optie is
+	while (beurtValid(beurt, pointerCo(xCo, yCo, lengte)) == 0) {
+		xCo = rand();
+		yCo = rand();
+	}
+	cout << "X=" << xCo % lengte << " Y=" << yCo % lengte << endl;
+	zetDoen(pointerCo(xCo, yCo, lengte), beurt);
+	if (beurt) {
+		beurt = 0;
+	}
+	else {
+		beurt = 1;
+	}
+
+}
+
+int telPunten(int kleur, int lengte) {
+	//tellen hoeveel punten
+	int counter = 0;
+	for (int i = 0; i < lengte; i++)
+	{
+		for (int k = 0; k < lengte; k++)
+		{
+			if (pointerCo(i, k, lengte)->data == kleur) {
+				counter++;
+			}
+		}
+	}
+	return counter;
+}
+
+void eindeBepalen(bool beurt, int lengte) {
+	//als bord vol is
+	bool NulGevonden = false;
+	for (int i = 0; i < lengte; i++)
+	{
+		for (int k = 0; k < lengte; k++)
+		{
+			//als er een leeg vak is
+			if (pointerCo(i, k, lengte)->data == 0) {
+				NulGevonden = true;
+			}
+		}
+	}
+	if (NulGevonden) {
+		if (beurt) {
+			cout << "Wit wint omdat zwart niet kan!" << endl;
+		}
+		else {
+			cout << "Zwart wint omdat wit niet kan!" << endl;
+		}
+	}
+	//als bord leeg is
+	else {
+		//declaratie hier voorkomt onnodig declareren
+		int WitPunten = telPunten(2, lengte);
+		int ZwartPunten = telPunten(1, lengte);
+		if (WitPunten < ZwartPunten) {
+			cout << "Zwart wint met " << ZwartPunten <<
+				" tegen wit met " << WitPunten << " punten." << endl;
+		}
+		else if (WitPunten > ZwartPunten) {
+			cout << "Wit wint met " << WitPunten <<
+				" punten tegen zwart met " << ZwartPunten << " punten." << endl;
+		}
+		else {
+			cout << "Het is gelijkspel. Beide spelers hebben " << ZwartPunten <<
+				" punten gehaald." << endl;
+		}
+	}
+}
+
+void spelen(bool beurt, int lengte, bool ZwartPC, bool WitPC) {
 	int beurtMogelijk = 1;
 	while (beurtMogelijk) {
-		beurtDoenMens(beurt, lengte);
+		//alle mogelijke opties afgaan
+		if (beurt && ZwartPC) {
+			beurtDoenPC(beurt, lengte);
+		}
+		else if (beurt == 0 && WitPC) {
+			beurtDoenPC(beurt, lengte);
+		}
+		else if (beurt == 0 && WitPC==0) {
+			beurtDoenMens(beurt, lengte);
+		}
+		else if (beurt && ZwartPC == 0) {
+			beurtDoenMens(beurt, lengte);
+		}
+		
+		//mooie opmaak
+		cout << endl;
 		print(lengte);
 		beurtMogelijk = 0;
 		for (int i = 0; i < lengte; i++)
@@ -793,25 +896,24 @@ void spelen(bool beurt, int lengte) {
 			}
 		}
 	}
-	if (beurt) {
-		cout << "Wit wint!" << endl;
-	}
-	else {
-		cout << "Zwart wint!" << endl;
-	}
-	
+	eindeBepalen(beurt, lengte);
 }
 
 int main()
 {
 	//lengte moet overal bruikbaar zijn
 	int lengte;
-
+	//random getallen
+	srand(time(NULL));
 	//wit = 0, zwart = 1;
 	bool beurt = 1;
 	//hoofdmenu();
+	cout << "Is Zwart een mens[0] of een computer[1]?" << endl;
+	bool ZwartPC = leesGetal();
+	cout << "Is Wit een mens[0] of een computer[1]?" << endl;
+	bool WitPC = leesGetal();
 	maakBord(lengte);
 	beginPositie(lengte);
 	print(lengte);
-	spelen(beurt, lengte);
+	spelen(beurt, lengte, ZwartPC, WitPC);
 }
