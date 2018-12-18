@@ -1,4 +1,3 @@
-#include "pch.h"
 #include <iostream>
 using namespace std;
 
@@ -13,32 +12,28 @@ private:
 	int aantalzetten;
 
 public:
+	int telPunten();
 	int lengte;
-	void lengteAanpassen();
-	void print();
 	void toevoegenVer();
-	void toevoegenRij(class grid* begin);
-	void verbinden(class grid* boven)
-	void maakBord();
-	void hoofdmenu();
+	void toevoegenRij();
+	void verbinden();
+	void headVerbinden();
+	void veranderData();
 	//othellobord(); //8 bij 8 of 0 bij 0
-	void beginpositie();
-	void verwijder();
-	void gegevensvragen();
-	void ritsen(); //bordvakje* boven, bordvakje* onder
-	void doezet(); //vakje in coordinaten
-	bool isgeldigezet();
-	void computerzet();
-	bool geldigezet();
-	int klaar();
-	void menszet();
-	
+	//void verwijder();
+	void zetDoen();
+	bool beurtValid();
+	void beurtDoenMens();
+	void beurtDoenPC();
+	void hoofdmenu();
+	void eindeBepalen();	
 	
 }; //oth	
 class grid{
 public:
 	//het getal dat erin staat
 	int data;
+	class grid* head; //het begin
 	//de verwijzingen
 	//windrichtingen voor duidelijkheid
 	class grid* noord;
@@ -49,25 +44,17 @@ public:
 	class grid* zuidwest;
 	class grid* west;
 	class grid* noordwest;
+	//nieuwe pointer aan pointerbord toevoegen
+	class grid* newItem(int x);
+	class grid* pointerCo();
 
-};
-
-class grid* head; //het begin
-
-//nieuwe pointer aan pointerbord toevoegen
-class grid* newItem(int x) {
-	class grid* newItem = new grid;
-	newItem->data = x;
-	newItem->noord = 0;
-	newItem->noordoost = 0;
-	newItem->oost = 0;
-	newItem->zuidoost = 0;
-	newItem->zuid = 0;
-	newItem->zuidwest = 0;
-	newItem->west = 0;
-	newItem->noordwest = 0;
-	return newItem;
-}	
+};//grid
 	
 int leesGetal();
 int main();
+void hoofdmenu();
+void print(int lengte);
+void maakBord(int &lengte);
+void beginPositie(int lengte);
+void spelen(bool beurt, int lengte, bool ZwartPC, bool WitPC);
+
