@@ -3,10 +3,6 @@ using namespace std;
 
 class oth{
 private:
-	
-	//bordvakje* ingang;
-	//bordvakje* maakrij();
-	//bordvakje* ganaar();
 	bool speler1, speler2; //mens of pc
 	bool beurt;
 	int aantalzetten;
@@ -19,14 +15,13 @@ public:
 	void verbinden();
 	void headVerbinden();
 	void veranderData();
-	//othellobord(); //8 bij 8 of 0 bij 0
-	//void verwijder();
+	void verwijder();
 	void zetDoen();
 	bool beurtValid();
 	void beurtDoenMens();
 	void beurtDoenPC();
 	void hoofdmenu();
-	void eindeBepalen();	
+	void eindeBepalen();
 	
 }; //oth	
 class grid{
@@ -57,4 +52,3 @@ void print(int lengte);
 void maakBord(int &lengte);
 void beginPositie(int lengte);
 void spelen(bool beurt, int lengte, bool ZwartPC, bool WitPC);
-
