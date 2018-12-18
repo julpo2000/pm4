@@ -27,6 +27,7 @@ int leesGetal() {
 	vorigGetal = -1;
 }//inputNumber
 
+
 //het pointerbord
 class grid {
 public:
@@ -839,6 +840,35 @@ void eindeBepalen(bool beurt, int lengte) {
 	}
 }
 
+void verwijder() {
+	//hulp pointer
+	class grid* temp = head;
+	//naar verste pointer
+	while (temp->zuidoost) {
+		temp = temp->zuidoost;
+	}
+	//nog een hulp pointer
+	class grid* eentjeTerug = temp->west;
+	while (eentjeTerug->noord)
+	{
+		while (eentjeTerug->west) {
+			delete temp->oost;
+			delete temp->zuidoost;
+			delete temp->zuid;
+			delete temp->zuidwest;
+
+			temp->oost = 0;
+			temp->zuidoost = 0;
+			temp->zuid = 0;
+			temp->zuidwest = 0;
+			temp = eentjeTerug;
+			eentjeTerug = eentjeTerug->west;
+		}
+		temp = eentjeTerug;
+		eentjeTerug = eentjeTerug->noord;
+	}
+}//verwijder
+
 void spelen(bool beurt, int lengte, bool ZwartPC, bool WitPC) {
 	int beurtMogelijk = 1;
 	while (beurtMogelijk) {
@@ -871,6 +901,7 @@ void spelen(bool beurt, int lengte, bool ZwartPC, bool WitPC) {
 		}
 	}
 	eindeBepalen(beurt, lengte);
+	verwijder();
 }
 void startSpel() {
 	int lengte;
@@ -902,11 +933,4 @@ void hoofdmenu() {
 		default: { cout << "geen geldige input." << endl; break; }
 		}//switch
 	}
-
-	//int hoofdmenu();
-	//hoofdmenu();
 }//hoofdmenu
-
-
-
-
